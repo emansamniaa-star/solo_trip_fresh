@@ -1,0 +1,58 @@
+@import "tailwindcss";
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  font-family: "Source Sans 3", sans-serif;
+  color: #1c1917;
+  background-color: #fafaf9;
+}
+
+#root {
+  min-height: 100vh;
+}
+
+@keyframes hero-rise {
+  from {
+    opacity: 0;
+    transform: translateY(1.25rem);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes soft-fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.hero-rise {
+  animation: hero-rise 0.9s ease-out both;
+}
+
+.hero-rise-delay {
+  animation: hero-rise 0.9s ease-out 0.15s both;
+}
+
+.hero-rise-delay-2 {
+  animation: hero-rise 0.9s ease-out 0.3s both;
+}
+
+.img-ken-burns {
+  animation: soft-fade 1.2s ease-out both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-rise,
+  .hero-rise-delay,
+  .hero-rise-delay-2,
+  .img-ken-burns {
+    animation: none;
+  }
+}
