@@ -1,6 +1,7 @@
 import bcrypt from 'bcryptjs'
 import * as userModel from '../models/user.model.js'
 import { signToken } from '../utils/token.js'
+import { optionalText, requireEmail, requirePassword, requiredText } from '../utils/validate.js'
 
 function authResponse(user) {
   const token = signToken(user)
@@ -9,22 +10,19 @@ function authResponse(user) {
 
 export async function register(req, res, next) {
   try {
-    const { firstName, city, email, password, bio = '', travelStyle = '' } = req.body
-
-    if (!firstName || !city || !email || !password) {
-      return res.status(400).json({ error: 'Missing required fields' })
-    }
-
-    if (String(password).length < 6) {
-      return res.status(400).json({ error: 'Password must be at least 6 characters' })
-    }
+    const firstName = requiredText(req.body.firstName, 'First name', 80)
+    const city = requiredText(req.body.city, 'City', 80)
+    const email = requireEmail(req.body.email)
+    const password = requirePassword(req.body.password)
+    const bio = optionalText(req.body.bio, 'Bio', 500)
+    const travelStyle = optionalText(req.body.travelStyle, 'Travel style', 40)
 
     const passwordHash = await bcrypt.hash(password, 10)
 
     const user = await userModel.createUser({
       firstName,
       city,
-      email: String(email).toLowerCase(),
+      email,
       passwordHash,
       bio,
       travelStyle,
@@ -41,13 +39,10 @@ export async function register(req, res, next) {
 
 export async function login(req, res, next) {
   try {
-    const { email, password } = req.body
+    const email = requireEmail(req.body.email)
+    const password = requirePassword(req.body.password)
 
-    if (!email || !password) {
-      return res.status(400).json({ error: 'Email and password are required' })
-    }
-
-    const user = await userModel.findUserByEmail(String(email).toLowerCase())
+    const user = await userModel.findUserByEmail(email)
 
     if (!user) {
       return res.status(401).json({ error: 'Invalid email or password' })
@@ -59,7 +54,7 @@ export async function login(req, res, next) {
       return res.status(401).json({ error: 'Invalid email or password' })
     }
 
-    const { passwordHash, ...safeUser } = user
+    const { passwordHash: _passwordHash, ...safeUser } = user
     res.json(authResponse(safeUser))
   } catch (error) {
     next(error)

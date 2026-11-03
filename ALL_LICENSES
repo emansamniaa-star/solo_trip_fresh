@@ -1,0 +1,32 @@
+# Third-party licenses
+
+Direct dependencies installed through npm. The locked versions are in `server/package-lock.json` and `client/package-lock.json`.
+
+## Server
+
+| Package | Version | License |
+| --- | --- | --- |
+| @neondatabase/serverless | 1.2.0 | MIT |
+| bcryptjs | 3.0.3 | BSD-3-Clause |
+| c8 | 12.0.0 | ISC |
+| cors | 2.8.6 | MIT |
+| dotenv | 18.0.9 | BSD-2-Clause |
+| express | 5.3.0 | MIT |
+| jsonwebtoken | 9.0.3 | MIT |
+| oxlint | 1.91.0 | MIT |
+| supertest | 7.3.1 | MIT |
+
+## Client
+
+| Package | Version | License |
+| --- | --- | --- |
+| @tailwindcss/vite | 4.3.3 | MIT |
+| @types/react | 19.3.0 | MIT |
+| @types/react-dom | 19.3.0 | MIT |
+| @vitejs/plugin-react | 6.1.2 | MIT |
+| oxlint | 1.90.0 | MIT |
+| react | 19.3.1 | MIT |
+| react-dom | 19.3.1 | MIT |
+| react-router-dom | 7.18.5 | MIT |
+| tailwindcss | 4.3.3 | MIT |
+| vite | 8.3.5 | MIT |

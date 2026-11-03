@@ -1,0 +1,66 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  server:
+    name: Server test, coverage, and lint
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: server/package-lock.json
+
+      - name: Install server dependencies
+        working-directory: server
+        run: npm ci
+
+      - name: Run unit and integration tests with coverage
+        working-directory: server
+        run: npm run test:coverage
+        env:
+          DATABASE_URL: postgresql://test:test@127.0.0.1/solo_trip_test
+          JWT_SECRET: ci-test-secret
+          LOG_FILE: /tmp/solo-trip-ci.log
+
+      - name: Lint the server
+        working-directory: server
+        run: npm run lint
+
+      - name: Check dependencies for high-severity issues
+        working-directory: server
+        run: npm run audit
+
+  client:
+    name: Client lint and build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: client/package-lock.json
+
+      - name: Install client dependencies
+        working-directory: client
+        run: npm ci
+
+      - name: Lint the client
+        working-directory: client
+        run: npm run lint
+
+      - name: Build the client
+        working-directory: client
+        run: npm run build

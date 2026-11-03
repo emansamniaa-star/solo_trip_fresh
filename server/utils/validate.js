@@ -40,3 +40,27 @@ export function requireDate(value, field) {
 
   return text
 }
+
+export function requireEmail(value) {
+  const email = requiredText(value, 'Email', 254).toLowerCase()
+
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    const error = new Error('Email must be a valid address')
+    error.status = 400
+    throw error
+  }
+
+  return email
+}
+
+export function requirePassword(value) {
+  const password = requiredText(value, 'Password', 72)
+
+  if (password.length < 6) {
+    const error = new Error('Password must be at least 6 characters')
+    error.status = 400
+    throw error
+  }
+
+  return password
+}
