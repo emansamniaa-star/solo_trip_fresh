@@ -1,0 +1,57 @@
+{
+  "name": "server",
+  "version": "1.0.0",
+  "description": "Backend API will live here (Node.js + Express + database).",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "node --watch index.js",
+    "setup-db": "node setupDb.js",
+    "seed": "node seed.js",
+    "setup-users": "node setupUsers.js",
+    "test": "node --test",
+    "test:coverage": "c8 --check-coverage node --test",
+    "lint": "oxlint .",
+    "audit": "npm audit --audit-level=high"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "c8": {
+    "all": true,
+    "include": [
+      "app.js",
+      "config/**",
+      "controllers/**",
+      "middleware/**",
+      "models/**",
+      "routes/**",
+      "utils/**"
+    ],
+    "exclude": [
+      "test/**"
+    ],
+    "reporter": [
+      "text",
+      "lcov"
+    ],
+    "lines": 70,
+    "statements": 70,
+    "functions": 70,
+    "branches": 70
+  },
+  "dependencies": {
+    "@neondatabase/serverless": "^1.2.0",
+    "bcryptjs": "^3.0.3",
+    "cors": "^2.8.6",
+    "dotenv": "^18.0.9",
+    "express": "^5.3.0",
+    "jsonwebtoken": "^9.0.3"
+  },
+  "devDependencies": {
+    "c8": "^12.0.0",
+    "oxlint": "^1.91.0",
+    "supertest": "^7.3.1"
+  }
+}
