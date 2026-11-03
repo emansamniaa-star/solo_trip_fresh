@@ -47,3 +47,20 @@ export async function findUserByEmail(email) {
   `
   return rows[0] || null
 }
+
+export async function findUserById(id) {
+  const rows = await sql`
+    SELECT
+      id,
+      first_name AS "firstName",
+      city,
+      email,
+      bio,
+      travel_style AS "travelStyle",
+      created_at AS "createdAt"
+    FROM users
+    WHERE id = ${id}
+    LIMIT 1
+  `
+  return rows[0] || null
+}

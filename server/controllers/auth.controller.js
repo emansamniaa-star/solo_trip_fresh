@@ -1,7 +1,11 @@
-
-
 import bcrypt from 'bcryptjs'
 import * as userModel from '../models/user.model.js'
+import { signToken } from '../utils/token.js'
+
+function authResponse(user) {
+  const token = signToken(user)
+  return { user, token }
+}
 
 export async function register(req, res, next) {
   try {
@@ -11,7 +15,7 @@ export async function register(req, res, next) {
       return res.status(400).json({ error: 'Missing required fields' })
     }
 
-    if (password.length < 6) {
+    if (String(password).length < 6) {
       return res.status(400).json({ error: 'Password must be at least 6 characters' })
     }
 
@@ -20,13 +24,13 @@ export async function register(req, res, next) {
     const user = await userModel.createUser({
       firstName,
       city,
-      email: email.toLowerCase(),
+      email: String(email).toLowerCase(),
       passwordHash,
       bio,
       travelStyle,
     })
 
-    res.status(201).json(user)
+    res.status(201).json(authResponse(user))
   } catch (error) {
     if (error.code === '23505') {
       return res.status(409).json({ error: 'Email already registered' })
@@ -43,7 +47,7 @@ export async function login(req, res, next) {
       return res.status(400).json({ error: 'Email and password are required' })
     }
 
-    const user = await userModel.findUserByEmail(email.toLowerCase())
+    const user = await userModel.findUserByEmail(String(email).toLowerCase())
 
     if (!user) {
       return res.status(401).json({ error: 'Invalid email or password' })
@@ -56,7 +60,21 @@ export async function login(req, res, next) {
     }
 
     const { passwordHash, ...safeUser } = user
-    res.json(safeUser)
+    res.json(authResponse(safeUser))
+  } catch (error) {
+    next(error)
+  }
+}
+
+export async function me(req, res, next) {
+  try {
+    const user = await userModel.findUserById(req.user.id)
+
+    if (!user) {
+      return res.status(401).json({ error: 'User not found' })
+    }
+
+    res.json(user)
   } catch (error) {
     next(error)
   }

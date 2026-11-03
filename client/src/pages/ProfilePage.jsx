@@ -4,19 +4,19 @@ import ProfileHeader from '../components/profile/ProfileHeader'
 import ProfileInterests from '../components/profile/ProfileInterests'
 import ProfileTrips from '../components/profile/ProfileTrips'
 import { getTrips } from '../api/trips'
+import { getUser } from '../api/session'
 
 export default function ProfilePage() {
   const [user, setUser] = useState(null)
   const [myTrips, setMyTrips] = useState([])
 
   useEffect(() => {
-    const raw = localStorage.getItem('soloTripUser')
-    if (!raw) {
+    const savedUser = getUser()
+    if (!savedUser) {
       setUser(null)
       return
     }
 
-    const savedUser = JSON.parse(raw)
     setUser(savedUser)
 
     async function loadMyTrips() {
@@ -24,10 +24,12 @@ export default function ProfilePage() {
         const trips = await getTrips()
         // MVP: match by host name until trips are linked to user id
         setMyTrips(
-          trips.filter(
-            (trip) =>
-              trip.hostName?.toLowerCase() === savedUser.firstName?.toLowerCase(),
-          ),
+          trips.filter((trip) => {
+            if (trip.hostUserId != null && savedUser.id != null) {
+              return Number(trip.hostUserId) === Number(savedUser.id)
+            }
+            return trip.hostName?.toLowerCase() === savedUser.firstName?.toLowerCase()
+          }),
         )
       } catch (err) {
         console.error(err)

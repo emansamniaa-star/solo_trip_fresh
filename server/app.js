@@ -8,8 +8,10 @@ import { requestLogger } from './middleware/requestLogger.js'
 
 const app = express()
 
+// Vite uses 5173 by default. 5174 is allowed too, in case the dev server
+// was started on the next free port.
 app.use(cors({
-  origin: ['http://localhost:5174'],
+  origin: ['http://localhost:5173', 'http://localhost:5174'],
 }))
 app.use(express.json())
 app.use(requestLogger)

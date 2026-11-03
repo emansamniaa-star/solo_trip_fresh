@@ -4,6 +4,7 @@ import Input from '../common/Input'
 import TextArea from '../common/TextArea'
 import Button from '../common/Button'
 import { registerUser } from '../../api/auth'
+import { saveSession } from '../../api/session'
 
 export default function RegisterForm() {
   const navigate = useNavigate()
@@ -28,9 +29,8 @@ export default function RegisterForm() {
     setSaving(true)
 
     try {
-      const user = await registerUser(form)
-      // MVP session: save user until we add JWT
-      localStorage.setItem('soloTripUser', JSON.stringify(user))
+      const data = await registerUser(form)
+      saveSession(data)
       navigate('/profile')
     } catch (err) {
       setError(err.message || 'Could not create account.')

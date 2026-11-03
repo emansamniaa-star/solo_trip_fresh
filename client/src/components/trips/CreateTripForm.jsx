@@ -4,6 +4,7 @@ import Input from '../common/Input'
 import TextArea from '../common/TextArea'
 import Button from '../common/Button'
 import { createTrip } from '../../api/trips'
+import { getUser } from '../../api/session'
 
 export default function CreateTripForm() {
   const navigate = useNavigate()
@@ -30,8 +31,7 @@ export default function CreateTripForm() {
     setSaving(true)
 
     try {
-      const saved = localStorage.getItem('soloTripUser')
-      const currentUser = saved ? JSON.parse(saved) : null
+      const currentUser = getUser()
 
       if (!currentUser) {
         setError('Please log in before publishing a trip.')
@@ -47,7 +47,7 @@ export default function CreateTripForm() {
       navigate(`/trips/${created.id}`)
     } catch (err) {
       console.error(err)
-      setError('Could not publish trip. Is the server running?')
+      setError(err.message || 'Could not publish trip. Is the server running?')
     } finally {
       setSaving(false)
     }

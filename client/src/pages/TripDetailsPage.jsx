@@ -1,5 +1,5 @@
 import { useParams, Link } from 'react-router-dom'
-import { getTripById } from '../data/mockTrips'
+import { getTripById } from '../api/trips'
 import { useEffect, useState } from 'react'
 import TripHeader from '../components/trips/TripHeader'
 import TripMeta from '../components/trips/TripMeta'

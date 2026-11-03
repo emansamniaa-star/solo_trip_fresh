@@ -1,4 +1,6 @@
 
+import { authHeaders } from './session'
+
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001'
 
 export async function getTrips() {
@@ -28,13 +30,18 @@ export async function getTripById(id) {
 export async function createTrip(tripData) {
   const response = await fetch(`${API_URL}/api/trips`, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: {
+      'Content-Type': 'application/json',
+      ...authHeaders(),
+    },
     body: JSON.stringify(tripData),
   })
 
+  const data = await response.json().catch(() => ({}))
+
   if (!response.ok) {
-    throw new Error('Failed to create trip')
+    throw new Error(data.error || 'Failed to create trip')
   }
 
-  return response.json()
+  return data
 }

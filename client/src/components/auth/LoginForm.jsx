@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import Input from '../common/Input'
 import Button from '../common/Button'
 import { loginUser } from '../../api/auth'
+import { saveSession } from '../../api/session'
 
 export default function LoginForm() {
   const navigate = useNavigate()
@@ -17,8 +18,8 @@ export default function LoginForm() {
     setSaving(true)
 
     try {
-      const user = await loginUser({ email, password })
-      localStorage.setItem('soloTripUser', JSON.stringify(user))
+      const data = await loginUser({ email, password })
+      saveSession(data)
       navigate('/profile')
     } catch (err) {
       setError(err.message || 'Could not log in.')

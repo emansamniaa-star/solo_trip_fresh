@@ -1,4 +1,5 @@
 import * as tripModel from '../models/trip.model.js'
+import { optionalText, requireDate, requiredText } from '../utils/validate.js'
 
 export async function listTrips(req, res, next) {
   try {
@@ -31,29 +32,17 @@ export async function getTripById(req, res, next) {
 
 export async function createTrip(req, res, next) {
   try {
-    const {
-      destination,
-      departureCity,
-      startDate,
-      endDate,
-      budget,
-      travelStyle,
-      hostName,
-      blurb,
-      itinerary = '',
-    } = req.body
+    const destination = requiredText(req.body.destination, 'Destination', 120)
+    const departureCity = requiredText(req.body.departureCity, 'Departure city', 120)
+    const startDate = requireDate(req.body.startDate, 'Departure date')
+    const endDate = requireDate(req.body.endDate, 'Return date')
+    const budget = requiredText(req.body.budget, 'Budget', 40)
+    const travelStyle = requiredText(req.body.travelStyle, 'Travel style', 40)
+    const blurb = requiredText(req.body.blurb, 'Trip description', 1000)
+    const itinerary = optionalText(req.body.itinerary, 'Itinerary', 2000)
 
-    if (
-      !destination ||
-      !departureCity ||
-      !startDate ||
-      !endDate ||
-      !budget ||
-      !travelStyle ||
-      !hostName ||
-      !blurb
-    ) {
-      return res.status(400).json({ error: 'Missing required trip fields' })
+    if (endDate < startDate) {
+      return res.status(400).json({ error: 'Return date must be on or after the departure date' })
     }
 
     const trip = await tripModel.createTrip({
@@ -63,7 +52,8 @@ export async function createTrip(req, res, next) {
       endDate,
       budget,
       travelStyle,
-      hostName,
+      hostName: req.user.firstName,
+      hostUserId: req.user.id,
       blurb,
       itinerary,
     })
